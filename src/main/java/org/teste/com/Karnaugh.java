@@ -316,7 +316,12 @@ public class Karnaugh {
             this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(indice[0],0,indice[0],3,indice[1],0,indice[1],3);
             numeroDosGrupos++;
 
-        } else if(ehPossivelConjunto(colunas)){
+            linhas[indice[0]] = false;
+            linhas[indice[1]] = false;
+            nLinhas -= 2;
+
+        }
+        if(ehPossivelConjunto(colunas)){
 
             //System.out.println("Colunas com Conjunto");
             int[] indice = ondeEPossivelConjunto(colunas);
@@ -325,7 +330,12 @@ public class Karnaugh {
             this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(0,indice[0],3,indice[0],0,indice[1],3,indice[1]);
             numeroDosGrupos++;
 
-        } else if(nLinhas>0) {
+            colunas[indice[0]] = false;
+            colunas[indice[1]] = false;
+            nColunas -= 2;
+
+        }
+        if(nLinhas>0) {
 
             //System.out.println("Linhas");
             int linha = 0;
@@ -339,7 +349,8 @@ public class Karnaugh {
             this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(linha,0,linha,3);
             numeroDosGrupos++;
 
-        } else if(nColunas>0) {
+        }
+        if(nColunas>0) {
 
             //System.out.println("Coluna");
             int coluna = 0;
@@ -353,8 +364,6 @@ public class Karnaugh {
             this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(0,coluna,3,coluna);
             numeroDosGrupos++;
 
-        } else {
-            //System.out.println("Nenhuma Linha ou Coluna");
         }
 
         // Verificação conjunto de 4 (Quadrados)
@@ -364,7 +373,7 @@ public class Karnaugh {
         for(int i=0;i<3;i++) {
             for(int j=0;j<3;j++) {
                 if(matrizBits[i][j] && matrizBits[i+1][j] && matrizBits[i][j+1] && matrizBits[i+1][j+1] &&
-                   matrizGrupos[i][j]==0 && matrizGrupos[i+1][j]==0 && matrizGrupos[i][j+1]==0 && matrizGrupos[i+1][j+1]==0) {
+                   (matrizGrupos[i][j]==0 || matrizGrupos[i+1][j]==0 || matrizGrupos[i][j+1]==0 || matrizGrupos[i+1][j+1]==0)) {
                     preencherMapa(matrizGrupos,i,j,i+1,j+1,numeroDosGrupos);
                     this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(i,j,i+1,j+1);
                     numeroDosGrupos++;
@@ -376,7 +385,7 @@ public class Karnaugh {
 
         for(int i=0;i<3;i++) {
             if(matrizBits[i][0] && matrizBits[i+1][0] && matrizBits[i][3] && matrizBits[i+1][3] &&
-               matrizGrupos[i][0]==0 && matrizGrupos[i+1][0]==0 && matrizGrupos[i][3]==0 && matrizGrupos[i+1][3]==0) {
+               (matrizGrupos[i][0]==0 || matrizGrupos[i+1][0]==0 || matrizGrupos[i][3]==0 || matrizGrupos[i+1][3]==0)) {
                 preencherMapa(matrizGrupos,i,0,i+1,0, numeroDosGrupos);
                 preencherMapa(matrizGrupos,i,3,i+1,3, numeroDosGrupos);
                 this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(i,0,i+1,0,i,3,i+1,3);
@@ -388,7 +397,7 @@ public class Karnaugh {
 
         for(int i=0;i<3;i++) {
             if(matrizBits[0][i] && matrizBits[0][i+1] && matrizBits[3][i] && matrizBits[3][i+1] &&
-               matrizGrupos[0][i]==0 && matrizGrupos[0][i+1]==0 && matrizGrupos[3][i]==0 && matrizGrupos[3][i+1]==0) {
+               (matrizGrupos[0][i]==0 || matrizGrupos[0][i+1]==0 || matrizGrupos[3][i]==0 || matrizGrupos[3][i+1]==0)) {
                 preencherMapa(matrizGrupos,0,i,0,i+1,numeroDosGrupos);
                 preencherMapa(matrizGrupos,3,i,3,i+1,numeroDosGrupos);
                 this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(0,i,0,i+1,3,i,3,i+1);
@@ -401,13 +410,13 @@ public class Karnaugh {
         for(int i=0;i<3;i++) {
             for(int j=0;j<4;j++){
                 if(matrizBits[i][j] && matrizBits[i+1][j] &&
-                   matrizGrupos[i][j]==0 && matrizGrupos[i+1][j]==0) { // Verifica os conjuntos de 2 na vertical
+                   (matrizGrupos[i][j]==0 || matrizGrupos[i+1][j]==0)) { // Verifica os conjuntos de 2 na vertical
                     preencherMapa(matrizGrupos,i,j,i+1,j,numeroDosGrupos);
                     this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(i,j,i+1,j);
                     numeroDosGrupos++;
                 }
                 if(matrizBits[j][i] && matrizBits[j][i+1] &&
-                   matrizGrupos[j][i]==0 && matrizGrupos[j][i+1]==0) { // Verifica os conjuntos de 2 na horizontal
+                   (matrizGrupos[j][i]==0 || matrizGrupos[j][i+1]==0)) { // Verifica os conjuntos de 2 na horizontal
                     preencherMapa(matrizGrupos,j,i,j,i+1,numeroDosGrupos);
                     this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(j,i,j,i+1);
                     numeroDosGrupos++;
@@ -419,14 +428,14 @@ public class Karnaugh {
 
         for(int i=0;i<4;i++) {
             if(matrizBits[i][0] && matrizBits[i][3] &&
-               matrizGrupos[i][0]==0 && matrizGrupos[i][3]==0) { // Verificão Esquerda-Direita
+               (matrizGrupos[i][0]==0 || matrizGrupos[i][3]==0)) { // Verificão Esquerda-Direita
                 preencherMapa(matrizGrupos,i,0,i,0,numeroDosGrupos);
                 preencherMapa(matrizGrupos,i,3,i,3,numeroDosGrupos);
                 this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(i,0,i,0,i,3,i,3);
                 numeroDosGrupos++;
             }
             if(matrizBits[0][i] && matrizBits[3][i] &&
-               matrizGrupos[0][i]==0 && matrizGrupos[3][i]==0) { // Verificação Cima-Baixo
+               (matrizGrupos[0][i]==0 || matrizGrupos[3][i]==0)) { // Verificação Cima-Baixo
                 preencherMapa(matrizGrupos,0,i,0,i,numeroDosGrupos);
                 preencherMapa(matrizGrupos,3,i,3,i,numeroDosGrupos);
                 this.expressao[numeroDosGrupos-1] = posicaoParaCaracteres(0,i,0,i,3,i,3,i);
